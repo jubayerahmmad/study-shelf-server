@@ -107,6 +107,22 @@ async function run() {
     });
 
     // delete borrowed book by id
+    app.delete("/borrowedBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      // increase the quantity of the book in allBooks collection
+      const book = await borrowedBooksCollection.findOne(query);
+      const filter = { _id: new ObjectId(book.bookId) };
+      const quantity = { $inc: { quantity: 1 } };
+      const updatedBookQuantity = await allBooksCollection.updateOne(
+        filter,
+        quantity
+      );
+
+      const result = await borrowedBooksCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // get borrowed books by email
     app.get("/borrowedBooks/:email", async (req, res) => {
