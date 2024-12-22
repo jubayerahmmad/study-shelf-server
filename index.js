@@ -29,6 +29,17 @@ async function run() {
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
+
+    // collections
+    const allBooksCollection = client.db("study-shelf").collection("allBooks");
+
+    //BOOKS RELATED APIS
+
+    // get all books
+    app.get("/allBooks", async (req, res) => {
+      const books = await allBooksCollection.find({}).toArray();
+      res.send(books);
+    });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
