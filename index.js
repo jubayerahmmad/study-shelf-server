@@ -48,6 +48,15 @@ async function run() {
       res.send(book);
     });
 
+    // get books by category
+
+    app.get("/books/:category", async (req, res) => {
+      const category = req.params.category;
+      // console.log(category);
+      const book = await allBooksCollection.find({ category }).toArray();
+      res.send(book);
+    });
+
     // update data of a book
     app.patch("/allBooks/:id", async (req, res) => {
       const id = req.params.id;
