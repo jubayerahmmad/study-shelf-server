@@ -32,6 +32,9 @@ async function run() {
 
     // collections
     const allBooksCollection = client.db("study-shelf").collection("allBooks");
+    const borrowedBooksCollection = client
+      .db("study-shelf")
+      .collection("borrowedBooks");
 
     //BOOKS RELATED APIS
 
@@ -74,6 +77,21 @@ async function run() {
       };
       const result = await allBooksCollection.updateOne(query, updatedBook);
       res.send(result);
+    });
+
+    // borrowed books api
+    app.post("/borrowedBooks", async (req, res) => {
+      const borrowedBook = req.body;
+      const result = await borrowedBooksCollection.insertOne(borrowedBook);
+      res.send(result);
+    });
+
+    // get borrowed books by email
+
+    app.get("/borrowedBooks/:email", async (req, res) => {
+      const email = req.params.email;
+      const books = await borrowedBooksCollection.find({ email }).toArray();
+      res.send(books);
     });
   } finally {
     // Ensures that the client will close when you finish/error
