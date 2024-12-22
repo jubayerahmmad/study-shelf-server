@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -23,9 +23,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
@@ -39,6 +39,33 @@ async function run() {
     app.get("/allBooks", async (req, res) => {
       const books = await allBooksCollection.find({}).toArray();
       res.send(books);
+    });
+
+    // get specific book by id
+    app.get("/allBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const book = await allBooksCollection.findOne({ _id: new ObjectId(id) });
+      res.send(book);
+    });
+
+    // update data of a book
+    app.patch("/allBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedData = req.body;
+      // console.log(updatedData);
+
+      const query = { _id: new ObjectId(id) };
+      const updatedBook = {
+        $set: {
+          image: updatedData.image,
+          name: updatedData.name,
+          authorName: updatedData.authorName,
+          category: updatedData.categorySelect,
+          rating: updatedData.rating,
+        },
+      };
+      const result = await allBooksCollection.updateOne(query, updatedBook);
+      res.send(result);
     });
   } finally {
     // Ensures that the client will close when you finish/error
