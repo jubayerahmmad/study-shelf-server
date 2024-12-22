@@ -49,7 +49,6 @@ async function run() {
     });
 
     // get books by category
-
     app.get("/books/:category", async (req, res) => {
       const category = req.params.category;
       // console.log(category);
