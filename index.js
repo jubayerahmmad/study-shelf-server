@@ -83,7 +83,16 @@ async function run() {
     app.post("/borrowedBooks", async (req, res) => {
       // save data in borrowedBooks collection
       const borrowedBook = req.body;
-      const result = await borrowedBooksCollection.insertOne(borrowedBook);
+
+      // prevent duplicate borrowing
+      const query = {
+        bookId: borrowedBook?.bookId,
+        email: borrowedBook?.email,
+      };
+      const isExist = await borrowedBooksCollection.findOne(query);
+      if (isExist) {
+        return res.status(400).send("Book already borrowed!");
+      }
 
       // decrese the quantity of the book in allBooks collection
       const filter = { _id: new ObjectId(borrowedBook.bookId) };
@@ -93,11 +102,13 @@ async function run() {
         quantity
       );
 
+      const result = await borrowedBooksCollection.insertOne(borrowedBook);
       res.send(result);
     });
 
-    // get borrowed books by email
+    // delete borrowed book by id
 
+    // get borrowed books by email
     app.get("/borrowedBooks/:email", async (req, res) => {
       const email = req.params.email;
       const books = await borrowedBooksCollection.find({ email }).toArray();
