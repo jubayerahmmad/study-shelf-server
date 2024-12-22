@@ -81,8 +81,18 @@ async function run() {
 
     // borrowed books api
     app.post("/borrowedBooks", async (req, res) => {
+      // save data in borrowedBooks collection
       const borrowedBook = req.body;
       const result = await borrowedBooksCollection.insertOne(borrowedBook);
+
+      // decrese the quantity of the book in allBooks collection
+      const filter = { _id: new ObjectId(borrowedBook.bookId) };
+      const quantity = { $inc: { quantity: -1 } };
+      const updatedBookQuantity = await allBooksCollection.updateOne(
+        filter,
+        quantity
+      );
+
       res.send(result);
     });
 
