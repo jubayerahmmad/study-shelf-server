@@ -3,6 +3,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -14,6 +15,21 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
+
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).send("ACCESS DENIED");
+  }
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).send("ACCESS DENIED");
+    }
+    req.user = decoded;
+  }); // here decoded = user info(email, expires on sent via jwt.sign)
+  next();
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@study-shelf-a11.8pqpo.mongodb.net/?retryWrites=true&w=majority&appName=Study-Shelf-A11`;
 
@@ -48,7 +64,7 @@ async function run() {
       const token = jwt.sign(email, process.env.SECRET_KEY, {
         expiresIn: "365d",
       });
-      console.log(token);
+      // console.log(token);
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -165,8 +181,18 @@ async function run() {
     });
 
     // get borrowed books by email
-    app.get("/borrowedBooks/:email", async (req, res) => {
+    app.get("/borrowedBooks/:email", verifyToken, async (req, res) => {
+      const decodedEmail = req.user?.email;
       const email = req.params.email;
+
+      // console.log("email from params", email);
+      // console.log("email from decoded", decodedEmail);
+
+      // verify if email from params and decoded email is same
+      if (email !== decodedEmail) {
+        return res.status(400).send("INVALID USER, FORBIDDEN ACCESS");
+      }
+
       const books = await borrowedBooksCollection.find({ email }).toArray();
       res.send(books);
     });
