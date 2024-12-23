@@ -10,7 +10,11 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://study-shelf-63c33.web.app",
+      "https://study-shelf-63c33.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
@@ -48,9 +52,9 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
 
     // collections
     const allBooksCollection = client.db("study-shelf").collection("allBooks");
