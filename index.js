@@ -38,6 +38,13 @@ async function run() {
 
     //BOOKS RELATED APIS
 
+    // post a book
+    app.post("/add-book", async (req, res) => {
+      const newBook = req.body;
+      const result = await allBooksCollection.insertOne(newBook);
+      res.send(result);
+    });
+
     // get all books
     app.get("/allBooks", async (req, res) => {
       const books = await allBooksCollection.find({}).toArray();
