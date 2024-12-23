@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
       return res.status(401).send("ACCESS DENIED");
     }
     req.user = decoded;
-  }); // here decoded = user info(email, expires on sent via jwt.sign)
+  }); // here decoded = user info(email, expires on, which was sent via jwt.sign)
   next();
 };
 
@@ -190,7 +190,7 @@ async function run() {
 
       // verify if email from params and decoded email is same
       if (email !== decodedEmail) {
-        return res.status(400).send("INVALID USER, FORBIDDEN ACCESS");
+        return res.status(403).send("INVALID USER, FORBIDDEN ACCESS");
       }
 
       const books = await borrowedBooksCollection.find({ email }).toArray();
