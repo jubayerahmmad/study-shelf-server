@@ -100,7 +100,16 @@ async function run() {
 
     // get all books
     app.get("/allBooks", async (req, res) => {
-      const books = await allBooksCollection.find({}).toArray();
+      // console.log("allBooks api called");
+
+      // filter available books by quantity
+      let filter = {};
+      if (req.query.available) {
+        filter = { quantity: { $gt: 0 } };
+      }
+      // const filter = { quantity: { $gt: 0 } };
+      const books = await allBooksCollection.find(filter).toArray();
+
       res.send(books);
     });
 
@@ -143,6 +152,15 @@ async function run() {
     app.post("/borrowedBooks", async (req, res) => {
       // save data in borrowedBooks collection
       const borrowedBook = req.body;
+
+      // prevent more than 3 books borrowing(using countDocuments)
+      const userEmail = borrowedBook?.email;
+      const borrowedBooksByUser = await borrowedBooksCollection.countDocuments({
+        email: userEmail,
+      });
+      if (borrowedBooksByUser >= 3) {
+        return res.status(401).send("You can't borrow more than 3 books!");
+      }
 
       // prevent duplicate borrowing
       const query = {

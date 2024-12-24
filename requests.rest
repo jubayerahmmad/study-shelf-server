@@ -3,3 +3,7 @@ GET http://localhost:5000/borrowedBooks/maxwell@gmail.com
 ###
 
 POST http://localhost:5000/borrowedBooks
+
+### 
+
+GET http://localhost:5000/allBooks
