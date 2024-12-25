@@ -120,6 +120,15 @@ async function run() {
       res.send(book);
     });
 
+    // delete specific book by id
+    app.delete("/allBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await allBooksCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
+
     // get books by category
     app.get("/books/:category", async (req, res) => {
       const category = req.params.category;
@@ -148,7 +157,8 @@ async function run() {
       res.send(result);
     });
 
-    // borrowed books api
+    // BORROWED BOOKS RELATED API
+    // post borrowed book
     app.post("/borrowedBooks", async (req, res) => {
       // save data in borrowedBooks collection
       const borrowedBook = req.body;
