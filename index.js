@@ -48,14 +48,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
-    // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
-
     // collections
     const allBooksCollection = client.db("study-shelf").collection("allBooks");
     const borrowedBooksCollection = client
@@ -98,16 +90,25 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/booksCount", async (req, res) => {
+    //   const totalBooks = await allBooksCollection.estimatedDocumentCount();
+    //   res.send({ totalBooks });
+    // });
+
     // get all books
     app.get("/allBooks", async (req, res) => {
-      // console.log("allBooks api called");
+      const query = req.query;
+      // const skip = parseInt(query.skip);
+      // const size = parseInt(query.size);
 
       // filter available books by quantity
       let filter = {};
-      if (req.query.available) {
+      if (query.available) {
         filter = { quantity: { $gt: 0 } };
       }
-      // const filter = { quantity: { $gt: 0 } };
+
+      // .skip(skip * size)
+      // .limit(size)
       const books = await allBooksCollection.find(filter).toArray();
 
       res.send(books);
@@ -216,9 +217,6 @@ async function run() {
     app.get("/borrowedBooks/:email", verifyToken, async (req, res) => {
       const decodedEmail = req.user?.email;
       const email = req.params.email;
-
-      // console.log("email from params", email);
-      // console.log("email from decoded", decodedEmail);
 
       // verify if email from params and decoded email is same
       if (email !== decodedEmail) {
