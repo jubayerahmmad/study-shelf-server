@@ -86,20 +86,14 @@ async function run() {
     // post a book
     app.post("/add-book", async (req, res) => {
       const newBook = req.body;
+      newBook.quantity = parseInt(newBook.quantity);
       const result = await allBooksCollection.insertOne(newBook);
       res.send(result);
     });
 
-    // app.get("/booksCount", async (req, res) => {
-    //   const totalBooks = await allBooksCollection.estimatedDocumentCount();
-    //   res.send({ totalBooks });
-    // });
-
     // get all books
     app.get("/allBooks", async (req, res) => {
       const query = req.query;
-      // const skip = parseInt(query.skip);
-      // const size = parseInt(query.size);
 
       // filter available books by quantity
       let filter = {};
@@ -107,8 +101,6 @@ async function run() {
         filter = { quantity: { $gt: 0 } };
       }
 
-      // .skip(skip * size)
-      // .limit(size)
       const books = await allBooksCollection.find(filter).toArray();
 
       res.send(books);
@@ -133,7 +125,6 @@ async function run() {
     // get books by category
     app.get("/books/:category", async (req, res) => {
       const category = req.params.category;
-      // console.log(category);
       const book = await allBooksCollection.find({ category }).toArray();
       res.send(book);
     });
