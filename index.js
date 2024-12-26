@@ -152,7 +152,6 @@ async function run() {
     // BORROWED BOOKS RELATED API
     // post borrowed book
     app.post("/borrowedBooks", async (req, res) => {
-      // save data in borrowedBooks collection
       const borrowedBook = req.body;
 
       // prevent more than 3 books borrowing(using countDocuments)
@@ -182,8 +181,23 @@ async function run() {
         quantity
       );
 
+      // save data in borrowedBooks collection
       const result = await borrowedBooksCollection.insertOne(borrowedBook);
       res.send(result);
+    });
+
+    // get borrowed books by email
+    app.get("/borrowedBooks/:email", verifyToken, async (req, res) => {
+      const decodedEmail = req.user?.email;
+      const email = req.params.email;
+
+      // verify if email from params and decoded email is same
+      if (email !== decodedEmail) {
+        return res.status(403).send("INVALID USER, FORBIDDEN ACCESS");
+      }
+
+      const books = await borrowedBooksCollection.find({ email }).toArray();
+      res.send(books);
     });
 
     // delete borrowed book by id
@@ -202,20 +216,6 @@ async function run() {
 
       const result = await borrowedBooksCollection.deleteOne(query);
       res.send(result);
-    });
-
-    // get borrowed books by email
-    app.get("/borrowedBooks/:email", verifyToken, async (req, res) => {
-      const decodedEmail = req.user?.email;
-      const email = req.params.email;
-
-      // verify if email from params and decoded email is same
-      if (email !== decodedEmail) {
-        return res.status(403).send("INVALID USER, FORBIDDEN ACCESS");
-      }
-
-      const books = await borrowedBooksCollection.find({ email }).toArray();
-      res.send(books);
     });
   } finally {
     // Ensures that the client will close when you finish/error
