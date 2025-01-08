@@ -6,34 +6,28 @@ This is the server-side application for the Study Shelf project.
 
 1. Clone the repository:
 
-```sh
-  git clone https://github.com/jubayerahmmad/study-shelf-server.git
-  cd study-shelf-server
-
-```
-
-````
+   ```sh
+   git clone https://github.com/jubayerahmmad/study-shelf-server.git
+   cd study-shelf-server
+   ```
 
 2. Install the dependencies:
 
-```sh
-npm install
-
-````
-
-````
+   ```sh
+   npm install
+   ```
 
 3. Set up environment variables:
-Create a `.env` file in the root directory and add the necessary environment variables. Example:
+   Create a `.env` file in the root directory and add the necessary environment variables. Example:
 
-```env
-PORT=3000
-DATABASE_URL=mongodb://localhost:27017/study-shelf
-````
+   ```env
+   PORT=3000
+   DATABASE_URL=mongodb://localhost:27017/study-shelf
+   ```
 
 4. Start the server:
    ```sh
-   npm start
+   npm run dev
    ```
 
 ## API Endpoints
@@ -56,5 +50,4 @@ DATABASE_URL=mongodb://localhost:27017/study-shelf
 
 ## Scripts
 
-- `start`: Starts the server
 - `dev`: Starts the server with nodemon for development
