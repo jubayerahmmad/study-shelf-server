@@ -42,11 +42,12 @@ This is the server-side application for the Study Shelf project.
 
 ## Dependencies
 
-- Express: Fast, unopinionated, minimalist web framework for Node.js
-- Mongoose: Elegant MongoDB object modeling for Node.js
-- dotenv: Loads environment variables from a `.env` file into `process.env`
-- body-parser: Node.js body parsing middleware
-- cors: Middleware to enable Cross-Origin Resource Sharing
+- `cookie-parser`: ^1.4.7
+- `cors`: ^2.8.5
+- `dotenv`: ^16.4.7
+- `express`: ^4.21.2
+- `jsonwebtoken`: ^9.0.2
+- `mongodb`: ^6.12.0
 
 ## Scripts
 
